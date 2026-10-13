@@ -1,0 +1,19 @@
+@page "/projects/create"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject Planova.Projects.Application.IProjectService ProjectService
+
+<PageTitle>Create project — PLANOVA</PageTitle>
+<h1>Create project</h1>
+@if (_message is not null) { <p role="status">@_message</p> }
+<EditForm Model="_model" OnValidSubmit="CreateAsync" FormName="create-project"><DataAnnotationsValidator /><ValidationSummary />
+<div class="admin-card"><label>Code <InputText @bind-Value="_model.Code" /></label><label>Name <InputText @bind-Value="_model.Name" /></label>
+<label>Description <InputTextArea @bind-Value="_model.Description" /></label><label>Owning unit ID <InputText @bind-Value="_model.Unit" /></label>
+<label>Manager user ID <InputText @bind-Value="_model.Manager" /></label><label>Sponsor user ID <InputText @bind-Value="_model.Sponsor" /></label>
+<label>Project type <InputText @bind-Value="_model.Type" /></label><label>Delivery method <InputSelect @bind-Value="_model.Method"><option>Agile</option><option>Waterfall</option><option>Hybrid</option><option>Operational</option></InputSelect></label>
+<label>Priority <InputText @bind-Value="_model.Priority" /></label><label>Start <InputDate @bind-Value="_model.Start" /></label><label>Target end <InputDate @bind-Value="_model.End" /></label><label>Currency <InputText @bind-Value="_model.Currency" /></label>
+<button type="submit" disabled="@_saving">Create Draft project</button></div></EditForm>
+@code {
+ private readonly FormModel _model=new(); private bool _saving; private string? _message;
+ private async Task CreateAsync(){if(!Guid.TryParse(_model.Unit,out var unit)||!Guid.TryParse(_model.Manager,out var manager)||!Guid.TryParse(_model.Sponsor,out var sponsor)){_message="Unit, manager, and sponsor must be valid IDs.";return;}_saving=true;var request=new Planova.Projects.Contracts.CreateProjectRequest(_model.Code,_model.Name,_model.Description,unit,sponsor,manager,_model.Type,_model.Method,_model.Priority,_model.Start,_model.End,0,_model.Currency);var result=await ProjectService.CreateAsync(request,Guid.NewGuid().ToString(),CancellationToken.None);_message=result.IsSuccess?$"Project {result.Value!.Code} created.":result.Error?.Message;_saving=false;}
+ private sealed class FormModel { [System.ComponentModel.DataAnnotations.Required] public string Code{get;set;}="";[System.ComponentModel.DataAnnotations.Required] public string Name{get;set;}="";public string? Description{get;set;}public string Unit{get;set;}="";public string Manager{get;set;}="";public string Sponsor{get;set;}="";public string Type{get;set;}="delivery";public string Method{get;set;}="Hybrid";public string Priority{get;set;}="medium";public DateOnly Start{get;set;}=DateOnly.FromDateTime(DateTime.Today);public DateOnly End{get;set;}=DateOnly.FromDateTime(DateTime.Today.AddMonths(3));public string Currency{get;set;}="AED";}
+}

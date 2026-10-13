@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Planova.Infrastructure.Events;
 using Planova.Infrastructure.Persistence;
 using Planova.Identity.Application;
+using Planova.Projects.Application;
 using Planova.SharedKernel.Operations;
 using Planova.SharedKernel.Time;
 
@@ -34,6 +35,7 @@ public static class InfrastructureExtensions
         services.AddScoped<IOutboxWriter, EfOutboxWriter>();
         services.AddScoped<IFoundationReferenceRecorder, FoundationReferenceRecorder>();
         services.AddScoped<IIdentityEvidenceWriter, IdentityEvidenceWriter>();
+        services.AddScoped<IProjectEvidenceWriter, ProjectEvidenceWriter>();
         services.AddScoped<IDependencyHealthReader, DatabaseDependencyHealthReader>();
         services.AddScoped<IdempotentEventProcessor>();
         services.AddScoped<IOutboxSink, LoggingOutboxSink>();

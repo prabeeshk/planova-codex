@@ -9,5 +9,6 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <ProjectReference Include="../Planova.SharedKernel/Planova.SharedKernel.csproj" />
     <ProjectReference Include="../Modules/Identity/Planova.Identity.Application/Planova.Identity.Application.csproj" />
+    <ProjectReference Include="../Modules/Projects/Planova.Projects.Application/Planova.Projects.Application.csproj" />
   </ItemGroup>
 </Project>

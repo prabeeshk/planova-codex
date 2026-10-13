@@ -1,0 +1,1 @@
+<Project Sdk="Microsoft.NET.Sdk"><ItemGroup><ProjectReference Include="../../../Planova.SharedKernel/Planova.SharedKernel.csproj" /><ProjectReference Include="../Planova.Projects.Contracts/Planova.Projects.Contracts.csproj" /></ItemGroup></Project>

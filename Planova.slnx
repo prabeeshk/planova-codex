@@ -5,6 +5,13 @@
     <Project Path="src/Planova.SharedKernel/Planova.SharedKernel.csproj" />
     <Project Path="src/Planova.Infrastructure/Planova.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/Projects/">
+    <Project Path="src/Modules/Projects/Planova.Projects.Domain/Planova.Projects.Domain.csproj" />
+    <Project Path="src/Modules/Projects/Planova.Projects.Application/Planova.Projects.Application.csproj" />
+    <Project Path="src/Modules/Projects/Planova.Projects.Contracts/Planova.Projects.Contracts.csproj" />
+    <Project Path="src/Modules/Projects/Planova.Projects.Infrastructure/Planova.Projects.Infrastructure.csproj" />
+    <Project Path="src/Modules/Projects/Planova.Projects.Api/Planova.Projects.Api.csproj" />
+  </Folder>
   <Folder Name="/src/Modules/Identity/">
     <Project Path="src/Modules/Identity/Planova.Identity.Domain/Planova.Identity.Domain.csproj" />
     <Project Path="src/Modules/Identity/Planova.Identity.Application/Planova.Identity.Application.csproj" />

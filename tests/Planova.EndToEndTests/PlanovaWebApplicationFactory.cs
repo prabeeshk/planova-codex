@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Planova.Identity.Infrastructure;
 using Planova.Infrastructure.Events;
 using Planova.Infrastructure.Persistence;
+using Planova.Projects.Infrastructure;
 
 namespace Planova.EndToEndTests;
 
@@ -34,6 +35,8 @@ public sealed class PlanovaWebApplicationFactory : WebApplicationFactory<Program
             services.RemoveAll<IdentityDbContext>();
             services.RemoveAll<DbContextOptions<PlatformDbContext>>();
             services.RemoveAll<PlatformDbContext>();
+            services.RemoveAll<DbContextOptions<ProjectsDbContext>>();
+            services.RemoveAll<ProjectsDbContext>();
             services.RemoveAll<IHostedService>();
             services.AddDbContext<IdentityDbContext>(options => options
                 .UseInMemoryDatabase(_databaseName + "-identity")
@@ -41,6 +44,10 @@ public sealed class PlanovaWebApplicationFactory : WebApplicationFactory<Program
                 .UseInternalServiceProvider(InMemoryServices));
             services.AddDbContext<PlatformDbContext>(options => options
                 .UseInMemoryDatabase(_databaseName + "-platform")
+                .ConfigureWarnings(warnings => warnings.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+                .UseInternalServiceProvider(InMemoryServices));
+            services.AddDbContext<ProjectsDbContext>(options => options
+                .UseInMemoryDatabase(_databaseName + "-projects")
                 .ConfigureWarnings(warnings => warnings.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                 .UseInternalServiceProvider(InMemoryServices));
         });

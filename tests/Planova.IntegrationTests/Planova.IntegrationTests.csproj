@@ -7,5 +7,6 @@
     <PackageReference Include="xunit.runner.visualstudio"><PrivateAssets>all</PrivateAssets></PackageReference>
     <ProjectReference Include="../../src/Planova.Infrastructure/Planova.Infrastructure.csproj" />
     <ProjectReference Include="../../src/Modules/Identity/Planova.Identity.Infrastructure/Planova.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="../../src/Modules/Projects/Planova.Projects.Infrastructure/Planova.Projects.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

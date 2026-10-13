@@ -49,9 +49,11 @@ public sealed class CapabilityAuthorizer(
             PermissionScope.Organisation => true,
             PermissionScope.Self => resource.OwnerUserId == userId,
             PermissionScope.Assigned => resource.AssignedUserId == userId,
-            PermissionScope.Department when resource.RequiredScope == PermissionScope.Department =>
-                await scopeResolver.IsDepartmentWithinAsync(grant.ScopeReferenceId, resource.ScopeReferenceId, cancellationToken),
-            PermissionScope.Team or PermissionScope.Project or PermissionScope.Portfolio => false,
+            PermissionScope.Department when resource.DepartmentId.HasValue || resource.RequiredScope == PermissionScope.Department =>
+                await scopeResolver.IsDepartmentWithinAsync(grant.ScopeReferenceId, resource.DepartmentId ?? resource.ScopeReferenceId, cancellationToken),
+            PermissionScope.Project => grant.ScopeReferenceId == (resource.ProjectId ??
+                (resource.RequiredScope == PermissionScope.Project ? resource.ScopeReferenceId : null)),
+            PermissionScope.Team or PermissionScope.Portfolio => false,
             _ => grant.Scope == resource.RequiredScope && grant.ScopeReferenceId == resource.ScopeReferenceId
         };
 }

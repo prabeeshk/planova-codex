@@ -1,0 +1,1 @@
+<Project Sdk="Microsoft.NET.Sdk"><ItemGroup><FrameworkReference Include="Microsoft.AspNetCore.App" /><ProjectReference Include="../Planova.Projects.Application/Planova.Projects.Application.csproj" /><ProjectReference Include="../Planova.Projects.Contracts/Planova.Projects.Contracts.csproj" /></ItemGroup></Project>

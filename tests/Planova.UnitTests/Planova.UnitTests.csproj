@@ -7,5 +7,6 @@
     <ProjectReference Include="../../src/Planova.SharedKernel/Planova.SharedKernel.csproj" />
     <ProjectReference Include="../../src/Modules/Identity/Planova.Identity.Application/Planova.Identity.Application.csproj" />
     <ProjectReference Include="../../src/Planova.Api/Planova.Api.csproj" />
+    <ProjectReference Include="../../src/Modules/Projects/Planova.Projects.Domain/Planova.Projects.Domain.csproj" />
   </ItemGroup>
 </Project>

@@ -5,7 +5,9 @@ public sealed record AuthorizationResource(
     PermissionScope RequiredScope = PermissionScope.Organisation,
     Guid? ScopeReferenceId = null,
     Guid? OwnerUserId = null,
-    Guid? AssignedUserId = null);
+    Guid? AssignedUserId = null,
+    Guid? DepartmentId = null,
+    Guid? ProjectId = null);
 
 public sealed record AuthorizationDecision(bool IsAllowed, string ReasonCode)
 {

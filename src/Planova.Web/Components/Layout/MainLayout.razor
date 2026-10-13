@@ -34,6 +34,7 @@
         {
             new Planova.Web.Navigation.NavigationItem("Overview", "/", null, "⌂"),
             new Planova.Web.Navigation.NavigationItem("Foundation context", "/foundation", Planova.Identity.Contracts.PermissionCodes.FoundationView, "◇"),
+            new Planova.Web.Navigation.NavigationItem("Projects", "/projects", Planova.Identity.Contracts.PermissionCodes.From("project.view"), "▣"),
             new Planova.Web.Navigation.NavigationItem("Administration", "/administration", Planova.Identity.Contracts.PermissionCodes.UserManage, "⚙"),
             new Planova.Web.Navigation.NavigationItem("Organisation", "/administration/organisation", Planova.Identity.Contracts.PermissionCodes.SettingsManage, "⌘"),
             new Planova.Web.Navigation.NavigationItem("Roles & access", "/administration/roles", Planova.Identity.Contracts.PermissionCodes.RoleManage, "◈")

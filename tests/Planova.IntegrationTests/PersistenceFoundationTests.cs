@@ -3,6 +3,7 @@ using Planova.Identity.Domain;
 using Planova.Identity.Infrastructure;
 using Planova.Infrastructure.Events;
 using Planova.Infrastructure.Persistence;
+using Planova.Projects.Infrastructure;
 using Planova.SharedKernel.Events;
 using Planova.SharedKernel.Identity;
 using Planova.SharedKernel.Time;
@@ -77,6 +78,17 @@ public sealed class PersistenceFoundationTests
         Assert.True(first);
         Assert.False(duplicate);
         Assert.Equal(1, calls);
+    }
+
+    [Fact]
+    public void Project_migrations_are_discoverable_in_order()
+    {
+        var options = new DbContextOptionsBuilder<ProjectsDbContext>()
+            .UseNpgsql("Host=127.0.0.1;Database=not-connected;Username=none;Password=none")
+            .Options;
+        using var db = new ProjectsDbContext(options, new TestTenant(OrganisationA));
+
+        Assert.Equal(["202610130008_ProjectCore", "202610130009_ProjectManagementCore"], db.Database.GetMigrations());
     }
 
     private sealed class TestTenant(Guid organisationId) : ITenantContext

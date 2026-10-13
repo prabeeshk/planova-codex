@@ -1,0 +1,25 @@
+@page "/projects/{Id:guid}"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject Planova.Projects.Application.IProjectService ProjectsService
+
+<PageTitle>Project — PLANOVA</PageTitle>
+@if (_loading){<FoundationState Kind="Loading" Title="Loading project" Message="Checking record scope." />}
+else if(_project is null){<FoundationState Kind="Forbidden" Title="Project unavailable" Message="The project does not exist or is outside your access scope." />}
+else {
+<h1>@_project.Name</h1><p><a class="button" href="@($"/projects/{Id}/edit")">Edit project</a></p>
+@if(_message is not null){<p role="status">@_message</p>}
+<dl class="details"><dt>Code</dt><dd>@_project.Code</dd><dt>Status</dt><dd>@_project.LifecycleStatus</dd><dt>Delivery</dt><dd>@_project.DeliveryMethod</dd><dt>Dates</dt><dd>@_project.StartDate – @_project.TargetEndDate</dd><dt>Progress</dt><dd>@_project.ProgressPercentage% (manually reported)</dd><dt>Health</dt><dd>@_project.OverallHealth (manually reported)</dd></dl>
+<section aria-labelledby="lifecycle"><h2 id="lifecycle">Lifecycle</h2><label>Reason <InputText @bind-Value="_transitionReason" /></label> @foreach(var status in NextStatuses()){<button @onclick="()=>TransitionAsync(status)">@status.Replace('_',' ')</button>}</section>
+<section aria-labelledby="members"><h2 id="members">Members</h2>@if(_members.Count==0){<p>No project members.</p>}else{<table><thead><tr><th>User</th><th>Role</th><th>Dates</th><th>Status</th></tr></thead><tbody>@foreach(var x in _members){<tr><td>@x.UserId</td><td>@x.Role</td><td>@x.StartDate – @x.EndDate</td><td>@x.Status</td></tr>}</tbody></table>}</section>
+<section aria-labelledby="health"><h2 id="health">Manual health history</h2>@if(_health.Count==0){<p>No health reports.</p>}else{<table><thead><tr><th>Effective</th><th>Overall</th><th>Summary</th><th>Rationale</th></tr></thead><tbody>@foreach(var x in _health){<tr><td>@x.EffectiveDate</td><td>@x.Overall</td><td>@x.Summary</td><td>@x.Rationale</td></tr>}</tbody></table>}</section>
+<section aria-labelledby="baselines"><h2 id="baselines">Planning baselines</h2>@if(_baselines.Count==0){<p>No baselines.</p>}else{<table><thead><tr><th>Version</th><th>Name</th><th>Status</th><th>Dates</th><th>Current date variance</th></tr></thead><tbody>@foreach(var x in _baselines){<tr><td>@x.Version</td><td>@x.Name</td><td>@x.Status</td><td>@x.StartDate – @x.EndDate</td><td>Start @((_project.StartDate.DayNumber-x.StartDate.DayNumber)) days; end @((_project.TargetEndDate.DayNumber-x.EndDate.DayNumber)) days</td></tr>}</tbody></table>}</section>
+<p>Progress method: <strong>@_settings?.ProgressMethod</strong>. Tasks, RAID, finances, and allocations are not available in this phase.</p>
+}
+@code {
+ [Parameter] public Guid Id{get;set;} private bool _loading=true; private string? _message; private string _transitionReason="";
+ private Planova.Projects.Contracts.ProjectResponse? _project; private IReadOnlyCollection<Planova.Projects.Contracts.ProjectMemberResponse> _members=[]; private IReadOnlyCollection<Planova.Projects.Contracts.ProjectHealthResponse> _health=[]; private IReadOnlyCollection<Planova.Projects.Contracts.ProjectBaselineResponse> _baselines=[]; private Planova.Projects.Contracts.ProjectSettingsResponse? _settings;
+ protected override async Task OnParametersSetAsync(){var result=await ProjectsService.GetAsync(Id,CancellationToken.None);if(result.IsSuccess){_project=result.Value;await ReloadRelatedAsync();}_loading=false;}
+ private async Task ReloadRelatedAsync(){var m=await ProjectsService.ListMembersAsync(Id,CancellationToken.None);if(m.IsSuccess)_members=m.Value!;var h=await ProjectsService.ListHealthAsync(Id,CancellationToken.None);if(h.IsSuccess)_health=h.Value!;var b=await ProjectsService.ListBaselinesAsync(Id,CancellationToken.None);if(b.IsSuccess)_baselines=b.Value!;var s=await ProjectsService.GetSettingsAsync(Id,CancellationToken.None);if(s.IsSuccess)_settings=s.Value;}
+ private string[] NextStatuses()=>_project?.LifecycleStatus switch{"draft"=>["proposed","cancelled"],"proposed"=>["draft","active","cancelled"],"active"=>["on_hold","completed","cancelled"],"on_hold"=>["active","cancelled"],"completed" or "cancelled"=>["archived"],_=>[]};
+ private async Task TransitionAsync(string status){if(string.IsNullOrWhiteSpace(_transitionReason)){_message="Enter a reason first.";return;}var actual=status=="completed"?DateOnly.FromDateTime(DateTime.Today):(DateOnly?)null;var result=await ProjectsService.TransitionAsync(Id,new(status,actual,_transitionReason,_project!.RowVersion),CancellationToken.None);if(result.IsSuccess){_project=result.Value;_message="Lifecycle updated.";}else _message=result.Error?.Message;}
+}

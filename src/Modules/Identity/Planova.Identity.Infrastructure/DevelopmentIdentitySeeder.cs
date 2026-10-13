@@ -54,7 +54,8 @@ public static class DevelopmentIdentitySeeder
         var existingCodes = await dbContext.Permissions.Select(x => x.Code).ToArrayAsync(cancellationToken);
         foreach (var code in PermissionCodes.All.Except(existingCodes, StringComparer.Ordinal))
         {
-            var implemented = code is "foundation.view" or "user.manage" or "role.manage" or "settings.manage" or "audit.view";
+            var implemented = code is "foundation.view" or "user.manage" or "role.manage" or "settings.manage" or "audit.view"
+                or "project.view" or "project.create" or "project.edit" or "project.archive" or "project.manage_members" or "project.baseline";
             dbContext.Permissions.Add(new PermissionDefinition(Guid.CreateVersion7(), code, Description(code), Risk(code), implemented));
         }
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -71,7 +72,8 @@ public static class DevelopmentIdentitySeeder
                 "Development bootstrap template. The display name is never used for authorisation.", true, AdminA, now));
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        var adminPermissions = permissions.Where(x => x.Code is "foundation.view" or "user.manage" or "role.manage" or "settings.manage" or "audit.view").ToArray();
+        var adminPermissions = permissions.Where(x => x.Code is "foundation.view" or "user.manage" or "role.manage" or "settings.manage" or "audit.view"
+            or "project.view" or "project.create" or "project.edit" or "project.archive" or "project.manage_members" or "project.baseline").ToArray();
         foreach (var permission in adminPermissions)
             if (!await dbContext.RoleGrants.IgnoreQueryFilters().AnyAsync(x => x.RoleId == AdministratorRoleA && x.PermissionId == permission.Id, cancellationToken))
                 dbContext.RoleGrants.Add(new RoleGrant(Guid.CreateVersion7(), OrganisationA, AdministratorRoleA, permission.Id,
@@ -93,6 +95,9 @@ public static class DevelopmentIdentitySeeder
         "foundation.view" => [PermissionScope.Self, PermissionScope.Organisation],
         "user.manage" or "role.manage" or "settings.manage" or "audit.view" or "audit.export" =>
             [PermissionScope.Department, PermissionScope.Organisation],
+        "project.create" => [PermissionScope.Department, PermissionScope.Organisation],
+        "project.view" or "project.edit" or "project.archive" or "project.manage_members" or "project.baseline" =>
+            [PermissionScope.Assigned, PermissionScope.Project, PermissionScope.Department, PermissionScope.Organisation],
         _ => Enum.GetValues<PermissionScope>()
     };
 

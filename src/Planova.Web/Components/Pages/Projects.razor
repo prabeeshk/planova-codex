@@ -1,0 +1,12 @@
+@page "/projects"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject Planova.Projects.Application.IProjectService ProjectsService
+
+<PageTitle>Projects — PLANOVA</PageTitle>
+<h1>Projects</h1>
+<p><a class="button" href="/projects/create">Create project</a></p>
+@if (_loading) { <FoundationState Kind="Loading" Title="Loading projects" Message="Applying your current project scope." /> }
+else if (_error is not null) { <FoundationState Kind="Error" Title="Projects unavailable" Message="@_error" /> }
+else if (_projects.Count == 0) { <FoundationState Kind="Empty" Title="No visible projects" Message="Create a project or request access to an existing project." /> }
+else { <div class="table-wrap"><table><caption>Authorised projects</caption><thead><tr><th>Code</th><th>Name</th><th>Status</th><th>Manager</th></tr></thead><tbody>@foreach(var project in _projects){<tr><td><a href="@($"/projects/{project.Id}")">@project.Code</a></td><td>@project.Name</td><td>@project.LifecycleStatus</td><td>@project.ManagerUserId</td></tr>}</tbody></table></div> }
+@code { private bool _loading=true; private string? _error; private IReadOnlyCollection<Planova.Projects.Contracts.ProjectResponse> _projects=[]; protected override async Task OnInitializedAsync(){var result=await ProjectsService.ListAsync(null,50,CancellationToken.None);if(result.IsSuccess)_projects=result.Value!.Items;else _error=result.Error?.Message;_loading=false;} }

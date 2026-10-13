@@ -16,5 +16,7 @@
     <ProjectReference Include="../Planova.Web/Planova.Web.csproj" />
     <ProjectReference Include="../Modules/Identity/Planova.Identity.Api/Planova.Identity.Api.csproj" />
     <ProjectReference Include="../Modules/Identity/Planova.Identity.Infrastructure/Planova.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="../Modules/Projects/Planova.Projects.Api/Planova.Projects.Api.csproj" />
+    <ProjectReference Include="../Modules/Projects/Planova.Projects.Infrastructure/Planova.Projects.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

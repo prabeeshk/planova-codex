@@ -8,6 +8,10 @@ using Planova.Api.Diagnostics;
 using Planova.Api.Security;
 using Planova.Identity.Api;
 using Planova.Identity.Infrastructure;
+using Planova.Projects.Api;
+using Planova.Projects.Application;
+using Planova.Projects.Infrastructure;
+using Planova.Api.Projects;
 using Planova.Infrastructure;
 using Planova.Infrastructure.Persistence;
 using Planova.SharedKernel.Diagnostics;
@@ -52,10 +56,13 @@ builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddPlanovaInfrastructure(builder.Configuration);
 builder.Services.AddIdentityInfrastructure(builder.Configuration);
+builder.Services.AddProjectsInfrastructure(builder.Configuration);
+builder.Services.AddScoped<IProjectIdentityReader, ProjectIdentityReferenceReader>();
 builder.Services.AddScoped<Microsoft.AspNetCore.Authentication.IClaimsTransformation, EnterpriseIdentityClaimsTransformation>();
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<IdentityDbContext>("identity-database", tags: ["ready"])
     .AddDbContextCheck<PlatformDbContext>("platform-database", tags: ["ready"]);
+builder.Services.AddHealthChecks().AddDbContextCheck<ProjectsDbContext>("projects-database", tags: ["ready"]);
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -116,6 +123,7 @@ app.MapOpenApi("/openapi/v1.json").AllowAnonymous();
 app.MapHealthChecks("/health/live", new() { Predicate = _ => false }).AllowAnonymous();
 app.MapHealthChecks("/health/ready", new() { Predicate = check => check.Tags.Contains("ready") }).AllowAnonymous();
 app.MapIdentityEndpoints();
+app.MapProjectEndpoints();
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
 await InitialiseDatabaseAsync(app);
@@ -131,8 +139,10 @@ static async Task InitialiseDatabaseAsync(WebApplication app)
     await using var scope = app.Services.CreateAsyncScope();
     var identity = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
     var platform = scope.ServiceProvider.GetRequiredService<PlatformDbContext>();
+    var projects = scope.ServiceProvider.GetRequiredService<ProjectsDbContext>();
     await identity.Database.MigrateAsync();
     await platform.Database.MigrateAsync();
+    await projects.Database.MigrateAsync();
 
     if (app.Environment.IsDevelopment() && app.Configuration.GetValue("DevelopmentAuth:Enabled", false))
     {
