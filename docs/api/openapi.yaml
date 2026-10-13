@@ -1,0 +1,60 @@
+openapi: 3.1.0
+info:
+  title: PLANOVA Phase 0 API
+  version: 1.0.0
+  description: Reference contract. The running application emits the authoritative JSON document at /openapi/v1.json.
+paths:
+  /api/v1/foundation/context:
+    get:
+      operationId: GetFoundationContextV1
+      summary: Return the authenticated, server-authorised foundation context.
+      security:
+        - oidc: []
+      responses:
+        "200":
+          description: Current identity, organisation, permissions, correlation ID, version, and dependency health.
+        "401":
+          $ref: "#/components/responses/AuthenticationRequired"
+        "403":
+          $ref: "#/components/responses/AccessDenied"
+  /api/v1/foundation/organisations/{organisationId}/context:
+    get:
+      operationId: GetOrganisationFoundationContextV1
+      summary: Tenant-bound reference used to verify cross-tenant rejection.
+      security:
+        - oidc: []
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200": { description: Authorised context }
+        "403": { $ref: "#/components/responses/AccessDenied" }
+  /api/v1/foundation/validation-probe:
+    post:
+      operationId: ValidateFoundationProbeV1
+      summary: Validate a technical request without storing data.
+      security:
+        - oidc: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                value: { type: string, maxLength: 50 }
+      responses:
+        "204": { description: Valid }
+        "400": { description: RFC 9457 validation problem }
+components:
+  securitySchemes:
+    oidc:
+      type: openIdConnect
+      openIdConnectUrl: https://identity-provider.example/.well-known/openid-configuration
+  responses:
+    AuthenticationRequired:
+      description: RFC 9457 response with code authentication_required and correlationId.
+    AccessDenied:
+      description: RFC 9457 response with code access_denied and correlationId.

@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <ProjectReference Include="../../../Planova.SharedKernel/Planova.SharedKernel.csproj" />
+    <ProjectReference Include="../Planova.Identity.Application/Planova.Identity.Application.csproj" />
+    <ProjectReference Include="../Planova.Identity.Contracts/Planova.Identity.Contracts.csproj" />
+  </ItemGroup>
+</Project>

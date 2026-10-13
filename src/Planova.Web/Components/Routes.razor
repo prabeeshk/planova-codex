@@ -1,0 +1,22 @@
+<Router AppAssembly="typeof(App).Assembly">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+            <Authorizing>
+                <FoundationState Kind="Loading" Title="Checking access" Message="PLANOVA is verifying your identity and capability." />
+            </Authorizing>
+            <NotAuthorized>
+                <FoundationState Kind="Forbidden" Title="Access unavailable" Message="Sign in with an identity that has the required capability." />
+            </NotAuthorized>
+        </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="typeof(Layout.MainLayout)">
+            <PageTitle>Not found — PLANOVA</PageTitle>
+            <section class="state-panel" role="status">
+                <h1>Page not found</h1>
+                <p>The requested page is unavailable or outside your access scope.</p>
+            </section>
+        </LayoutView>
+    </NotFound>
+</Router>

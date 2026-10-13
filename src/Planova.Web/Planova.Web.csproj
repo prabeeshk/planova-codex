@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <ProjectReference Include="../Planova.SharedKernel/Planova.SharedKernel.csproj" />
+    <ProjectReference Include="../Modules/Identity/Planova.Identity.Contracts/Planova.Identity.Contracts.csproj" />
+    <ProjectReference Include="../Modules/Identity/Planova.Identity.Application/Planova.Identity.Application.csproj" />
+  </ItemGroup>
+</Project>

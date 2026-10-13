@@ -1,0 +1,21 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Planova.Api/Planova.Api.csproj" />
+    <Project Path="src/Planova.Web/Planova.Web.csproj" />
+    <Project Path="src/Planova.SharedKernel/Planova.SharedKernel.csproj" />
+    <Project Path="src/Planova.Infrastructure/Planova.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Identity/">
+    <Project Path="src/Modules/Identity/Planova.Identity.Domain/Planova.Identity.Domain.csproj" />
+    <Project Path="src/Modules/Identity/Planova.Identity.Application/Planova.Identity.Application.csproj" />
+    <Project Path="src/Modules/Identity/Planova.Identity.Infrastructure/Planova.Identity.Infrastructure.csproj" />
+    <Project Path="src/Modules/Identity/Planova.Identity.Api/Planova.Identity.Api.csproj" />
+    <Project Path="src/Modules/Identity/Planova.Identity.Contracts/Planova.Identity.Contracts.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Planova.UnitTests/Planova.UnitTests.csproj" />
+    <Project Path="tests/Planova.IntegrationTests/Planova.IntegrationTests.csproj" />
+    <Project Path="tests/Planova.ArchitectureTests/Planova.ArchitectureTests.csproj" />
+    <Project Path="tests/Planova.EndToEndTests/Planova.EndToEndTests.csproj" />
+  </Folder>
+</Solution>

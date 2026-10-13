@@ -1,0 +1,10 @@
+@page "/administration/roles"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject IIdentityAdministrationService Administration
+<PageTitle>Role administration — PLANOVA</PageTitle>
+<h1>Roles and permission grants</h1>
+<p>Roles are configurable templates. Authorisation never checks their display names.</p>
+@if (_loading) { <FoundationState Kind="Loading" Title="Loading roles" Message="Loading grants and risk-labelled permissions." /> }
+else { <div class="admin-grid">@foreach(var role in _roles){<article class="admin-card"><h2>@role.Name</h2><p><code>@role.Code</code> @if(role.IsSystem){<span class="risk-badge">System-defined</span>}</p><p>@(role.Description ?? "No description")</p><h3>Grants</h3>@if(role.Grants.Count==0){<p>No grants.</p>}else{<ul>@foreach(var grant in role.Grants){<li><code>@grant.PermissionCode</code> — @grant.Effect, @grant.Scope</li>}</ul>}</article>}</div> }
+<section class="admin-card"><h2>Permission catalogue</h2><div class="table-wrap"><table><caption>Stable permissions and implementation state</caption><thead><tr><th>Code</th><th>Risk</th><th>Status</th><th>Permitted scopes</th></tr></thead><tbody>@foreach(var permission in _permissions){<tr><td><code>@permission.Code</code></td><td>@permission.RiskLevel</td><td>@(permission.IsImplemented ? "Implemented" : "Reserved — fails closed")</td><td>@string.Join(", ", permission.PermittedScopes)</td></tr>}</tbody></table></div></section>
+@code { private bool _loading=true; private IReadOnlyCollection<RoleResponse> _roles=[]; private IReadOnlyCollection<PermissionResponse> _permissions=[]; protected override async Task OnInitializedAsync(){ var roles=await Administration.ListRolesAsync(CancellationToken.None);var permissions=await Administration.ListPermissionsAsync(CancellationToken.None);if(roles.IsSuccess)_roles=roles.Value!;if(permissions.IsSuccess)_permissions=permissions.Value!;_loading=false; } }

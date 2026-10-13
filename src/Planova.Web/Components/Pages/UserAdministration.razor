@@ -1,0 +1,16 @@
+@page "/administration/users"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject IIdentityAdministrationService Administration
+
+<PageTitle>User administration — PLANOVA</PageTitle>
+<h1>User directory</h1>
+<p>Enterprise identities are linked by validated issuer and subject. Email and job title do not grant access.</p>
+@if (_loading) { <FoundationState Kind="Loading" Title="Loading users" Message="Applying tenant and capability filters." /> }
+else if (_users.Count == 0) { <FoundationState Kind="Empty" Title="No users" Message="Provision a user through the protected administration API." /> }
+else
+{
+    <div class="table-wrap"><table><caption>Users in the current organisation</caption><thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Job title</th><th>Access</th></tr></thead><tbody>
+    @foreach (var user in _users) { <tr><td>@user.DisplayName @if(user.IsEmergencyAdministrator){<span class="risk-badge">Emergency admin</span>}</td><td>@user.Email</td><td><span class="status-text">● @user.Status</span></td><td>@(user.JobTitle ?? "—")</td><td><a href="@($"/administration/access?userId={user.Id}")" aria-label="Inspect effective access for @user.DisplayName">Inspect</a></td></tr> }
+    </tbody></table></div>
+}
+@code { private bool _loading=true; private IReadOnlyCollection<UserResponse> _users=[]; protected override async Task OnInitializedAsync(){ var result=await Administration.ListUsersAsync(null,100,CancellationToken.None); if(result.IsSuccess)_users=result.Value!.Items; _loading=false; } }

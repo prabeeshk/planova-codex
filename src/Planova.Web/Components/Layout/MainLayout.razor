@@ -1,0 +1,50 @@
+@inherits LayoutComponentBase
+@inject Planova.Web.Navigation.INavigationCapabilityProvider NavigationCapabilities
+
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<div class="app-shell">
+    <header class="topbar">
+        <a class="brand" href="/" aria-label="PLANOVA home">
+            <span class="brand-mark" aria-hidden="true">✦</span>
+            <span>PLANOVA</span>
+        </a>
+        <span class="environment-badge">Enterprise platform</span>
+    </header>
+    <div class="shell-body">
+        <nav class="primary-nav" aria-label="Primary navigation">
+            @foreach (var item in _visibleItems)
+            {
+                <NavLink href="@item.Route" Match="@(item.Route == "/" ? NavLinkMatch.All : NavLinkMatch.Prefix)">
+                    <span aria-hidden="true">@item.IconLabel</span> @item.Label
+                </NavLink>
+            }
+        </nav>
+        <main id="main-content" tabindex="-1">
+            @Body
+        </main>
+    </div>
+</div>
+
+@code {
+    private readonly List<Planova.Web.Navigation.NavigationItem> _visibleItems = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var declaredItems = new[]
+        {
+            new Planova.Web.Navigation.NavigationItem("Overview", "/", null, "⌂"),
+            new Planova.Web.Navigation.NavigationItem("Foundation context", "/foundation", Planova.Identity.Contracts.PermissionCodes.FoundationView, "◇"),
+            new Planova.Web.Navigation.NavigationItem("Administration", "/administration", Planova.Identity.Contracts.PermissionCodes.UserManage, "⚙"),
+            new Planova.Web.Navigation.NavigationItem("Organisation", "/administration/organisation", Planova.Identity.Contracts.PermissionCodes.SettingsManage, "⌘"),
+            new Planova.Web.Navigation.NavigationItem("Roles & access", "/administration/roles", Planova.Identity.Contracts.PermissionCodes.RoleManage, "◈")
+        };
+
+        foreach (var item in declaredItems)
+        {
+            if (await NavigationCapabilities.IsVisibleAsync(item))
+            {
+                _visibleItems.Add(item);
+            }
+        }
+    }
+}

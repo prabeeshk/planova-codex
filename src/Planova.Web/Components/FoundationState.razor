@@ -1,0 +1,15 @@
+<section class="state-panel" role="status" aria-live="polite">
+    <h2>@Title</h2>
+    <p><span class="state-label">@Kind:</span> @Message</p>
+</section>
+
+@code {
+    [Parameter, EditorRequired]
+    public required string Kind { get; init; }
+
+    [Parameter, EditorRequired]
+    public required string Title { get; init; }
+
+    [Parameter, EditorRequired]
+    public required string Message { get; init; }
+}

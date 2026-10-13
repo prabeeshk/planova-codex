@@ -1,0 +1,33 @@
+@page "/"
+@attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+
+<PageTitle>Architecture foundation — PLANOVA</PageTitle>
+
+<section class="hero">
+    <p class="eyebrow">Architecture foundation</p>
+    <h1>One governed platform, ready for trusted modules.</h1>
+    <p class="lede">PLANOVA is running its Phase 0 shell. Business modules remain intentionally unavailable until their authorised vertical slices are implemented.</p>
+</section>
+
+<section class="status-grid" aria-label="Foundation status">
+    <article>
+        <span class="status-symbol" aria-label="Available">✓</span>
+        <h2>Identity boundary</h2>
+        <p>OpenID Connect ready, with development authentication isolated from production.</p>
+    </article>
+    <article>
+        <span class="status-symbol" aria-label="Available">✓</span>
+        <h2>Server authorisation</h2>
+        <p>Stable permission codes, scoped grants, explicit denies, and tenant isolation.</p>
+    </article>
+    <article>
+        <span class="status-symbol" aria-label="Available">✓</span>
+        <h2>Reliable evidence</h2>
+        <p>Append-only audit evidence and transactional outbox foundations.</p>
+    </article>
+</section>
+
+<section class="state-panel" aria-labelledby="reference-heading">
+    <h2 id="reference-heading">Reference capability</h2>
+    <p>Call <code>GET /api/v1/foundation/context</code> with an authenticated identity to inspect the current user, organisation, permissions, correlation ID, version, and dependency health.</p>
+</section>

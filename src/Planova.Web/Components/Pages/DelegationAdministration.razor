@@ -1,0 +1,10 @@
+@page "/administration/delegations"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject IIdentityAdministrationService Administration
+<PageTitle>Delegation administration — PLANOVA</PageTitle>
+<h1>Time-bound delegations</h1>
+<p>Delegations cannot chain or exceed the delegator's current authority. Revoking source authority removes effective delegated access.</p>
+@if (_loading){<FoundationState Kind="Loading" Title="Loading delegations" Message="Checking validity and revocation state." />}
+else if(_delegations.Count==0){<FoundationState Kind="Empty" Title="No delegations" Message="Create a bounded delegation through the protected administration API." />}
+else{<div class="table-wrap"><table><caption>Delegations</caption><thead><tr><th>Delegate</th><th>Permissions</th><th>Scope</th><th>Period</th><th>Status</th></tr></thead><tbody>@foreach(var item in _delegations){<tr><td>@item.DelegateUserId</td><td>@string.Join(", ", item.PermissionCodes)</td><td>@item.Scope</td><td>@item.StartsAt.ToString("u") – @item.EndsAt.ToString("u")</td><td><span class="status-text">● @item.Status</span></td></tr>}</tbody></table></div>}
+@code { private bool _loading=true; private IReadOnlyCollection<DelegationResponse> _delegations=[]; protected override async Task OnInitializedAsync(){var result=await Administration.ListDelegationsAsync(CancellationToken.None);if(result.IsSuccess)_delegations=result.Value!;_loading=false;} }

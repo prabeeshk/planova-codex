@@ -1,0 +1,10 @@
+@page "/administration/groups"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject IIdentityAdministrationService Administration
+<PageTitle>Group administration — PLANOVA</PageTitle>
+<h1>Groups and membership</h1>
+<p>Group membership is dated and checked for privilege escalation before it becomes active.</p>
+@if (_loading) { <FoundationState Kind="Loading" Title="Loading groups" Message="Reading current memberships and sources." /> }
+else if (_groups.Count==0) { <FoundationState Kind="Empty" Title="No groups" Message="Create a security group through the protected administration API." /> }
+else { <div class="admin-grid">@foreach(var group in _groups){<article class="admin-card"><h2>@group.Name</h2><p><span class="status-text">● @group.Status</span> · @group.Type</p><p>External key: @(group.ExternalKey ?? "Not linked")</p></article>}</div> }
+@code { private bool _loading=true; private IReadOnlyCollection<GroupResponse> _groups=[]; protected override async Task OnInitializedAsync(){ var result=await Administration.ListGroupsAsync(null,100,CancellationToken.None); if(result.IsSuccess)_groups=result.Value!.Items; _loading=false; } }

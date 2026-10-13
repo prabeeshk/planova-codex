@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../../../Planova.SharedKernel/Planova.SharedKernel.csproj" />
+    <ProjectReference Include="../Planova.Identity.Contracts/Planova.Identity.Contracts.csproj" />
+  </ItemGroup>
+</Project>

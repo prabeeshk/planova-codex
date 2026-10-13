@@ -1,0 +1,32 @@
+@page "/administration/organisation"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject IIdentityAdministrationService Administration
+
+<PageTitle>Organisation administration — PLANOVA</PageTitle>
+<h1>Organisation settings and hierarchy</h1>
+@if (_loading) { <FoundationState Kind="Loading" Title="Loading organisation" Message="Reading the server-resolved tenant." /> }
+else if (_error is not null) { <FoundationState Kind="Error" Title="Unable to load organisation" Message="@_error" /> }
+else
+{
+    <section class="admin-card" aria-labelledby="organisation-heading">
+        <h2 id="organisation-heading">@_organisation!.Name</h2>
+        <dl class="details"><dt>Code</dt><dd>@_organisation.Code</dd><dt>Time zone</dt><dd>@_organisation.DefaultTimeZone</dd><dt>Currency</dt><dd>@_organisation.DefaultCurrency</dd></dl>
+    </section>
+    <section class="admin-card" aria-labelledby="hierarchy-heading">
+        <h2 id="hierarchy-heading">Hierarchy</h2>
+        @if (_units.Count == 0) { <p>No organisation units have been created.</p> }
+        else { <table><caption class="sr-only">Organisation units</caption><thead><tr><th>Code</th><th>Name</th><th>Type</th><th>Status</th></tr></thead><tbody>@foreach (var unit in _units) { <tr><td>@unit.Code</td><td>@unit.Name</td><td>@unit.Type</td><td><span class="status-text">● @unit.Status</span></td></tr> }</tbody></table> }
+    </section>
+}
+
+@code {
+    private bool _loading = true; private string? _error; private OrganisationResponse? _organisation;
+    private IReadOnlyCollection<OrganisationUnitResponse> _units = [];
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await Administration.GetOrganisationAsync(CancellationToken.None);
+        if (result.IsSuccess) { _organisation = result.Value; var units = await Administration.ListOrganisationUnitsAsync(CancellationToken.None); if (units.IsSuccess) _units = units.Value!; else _error = units.Error?.Message; }
+        else _error = result.Error?.Message;
+        _loading = false;
+    }
+}

@@ -1,0 +1,60 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-package:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_DB: planova_ci
+          POSTGRES_USER: planova
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U planova -d planova_ci"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+    env:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Planova: Host=localhost;Port=5432;Database=planova_ci;Username=planova
+      Database__MigrateOnStartup: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - name: Restore dependencies and tools
+        run: |
+          dotnet restore Planova.slnx
+          dotnet tool restore
+      - name: Verify formatting
+        run: dotnet format Planova.slnx --verify-no-changes --no-restore
+      - name: Build with static analysis
+        run: dotnet build Planova.slnx -c Release --no-restore
+      - name: Test
+        run: dotnet test Planova.slnx -c Release --no-build --logger trx --results-directory TestResults
+      - name: Apply empty-database migrations
+        run: |
+          dotnet ef database update --project src/Modules/Identity/Planova.Identity.Infrastructure --startup-project src/Planova.Api --context IdentityDbContext --no-build --configuration Release
+          dotnet ef database update --project src/Planova.Infrastructure --startup-project src/Planova.Api --context PlatformDbContext --no-build --configuration Release
+      - name: Dependency vulnerability scan
+        run: dotnet list Planova.slnx package --vulnerable --include-transitive
+      - name: Secret scan
+        uses: gitleaks/gitleaks-action@v2
+      - name: Package
+        run: dotnet publish src/Planova.Api/Planova.Api.csproj -c Release --no-build -o artifacts/planova
+      - uses: actions/upload-artifact@v4
+        with:
+          name: planova
+          path: artifacts/planova

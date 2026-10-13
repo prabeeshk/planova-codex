@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <UserSecretsId>planova-phase0-local</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.OpenApi" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" />
+    <ProjectReference Include="../Planova.SharedKernel/Planova.SharedKernel.csproj" />
+    <ProjectReference Include="../Planova.Infrastructure/Planova.Infrastructure.csproj" />
+    <ProjectReference Include="../Planova.Web/Planova.Web.csproj" />
+    <ProjectReference Include="../Modules/Identity/Planova.Identity.Api/Planova.Identity.Api.csproj" />
+    <ProjectReference Include="../Modules/Identity/Planova.Identity.Infrastructure/Planova.Identity.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

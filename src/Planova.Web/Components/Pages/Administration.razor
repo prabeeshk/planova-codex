@@ -1,0 +1,18 @@
+@page "/administration"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+
+<PageTitle>Administration — PLANOVA</PageTitle>
+<p class="eyebrow">Identity and organisation</p>
+<h1>Administration</h1>
+<p class="lede">Manage the current organisation, enterprise-linked users, groups, configurable roles, scoped assignments, and time-bound delegations.</p>
+
+<nav class="admin-grid" aria-label="Administration areas">
+    <a href="/administration/organisation"><strong>Organisation</strong><span>Settings and hierarchy</span></a>
+    <a href="/administration/users"><strong>Users</strong><span>Provisioning and lifecycle</span></a>
+    <a href="/administration/groups"><strong>Groups</strong><span>Membership and access sources</span></a>
+    <a href="/administration/roles"><strong>Roles</strong><span>Permissions and scoped grants</span></a>
+    <a href="/administration/access"><strong>Effective access</strong><span>Assignments and explanations</span></a>
+    <a href="/administration/delegations"><strong>Delegations</strong><span>Time-bound authority</span></a>
+</nav>
+
+<FoundationState Kind="Info" Title="Security boundary" Message="Navigation follows effective capabilities. Every administration API and service operation independently authorises the server-resolved user and organisation." />

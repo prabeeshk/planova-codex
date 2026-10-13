@@ -1,0 +1,13 @@
+@page "/administration/access"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject IIdentityAdministrationService Administration
+@inject NavigationManager Navigation
+<PageTitle>Effective access — PLANOVA</PageTitle>
+<h1>Scoped assignments and effective access</h1>
+<p>The inspector shows the role, direct or group source, evaluated scope, validity, and delegation source for each grant.</p>
+@if (_userId is null) { <FoundationState Kind="Empty" Title="Choose a user" Message="Open a user from the directory to inspect effective access." /> }
+else if (_loading) { <FoundationState Kind="Loading" Title="Calculating access" Message="Evaluating current roles, group memberships, dates, scopes, denies, and delegations." /> }
+else if (_error is not null) { <FoundationState Kind="Forbidden" Title="Access details unavailable" Message="@_error" /> }
+else if (_access!.Grants.Count==0) { <FoundationState Kind="Empty" Title="No effective grants" Message="No active access sources apply to this user." /> }
+else { <div class="table-wrap"><table><caption>Effective access explanation</caption><thead><tr><th>Permission</th><th>Effect</th><th>Scope</th><th>Source</th><th>Valid until</th></tr></thead><tbody>@foreach(var grant in _access.Grants){<tr><td><code>@grant.PermissionCode</code></td><td>@grant.Effect</td><td>@grant.Scope @(grant.ScopeReferenceId?.ToString() ?? "")</td><td>@grant.SourceName <span class="source-badge">@grant.SourceType</span></td><td>@(grant.ValidTo?.ToString("u") ?? "No expiry")</td></tr>}</tbody></table></div> }
+@code { private Guid? _userId; private bool _loading; private string? _error; private EffectiveAccessResponse? _access; protected override async Task OnInitializedAsync(){ var uri=Navigation.ToAbsoluteUri(Navigation.Uri); var query=Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query); if(Guid.TryParse(query.GetValueOrDefault("userId"),out var id)){_userId=id;_loading=true;var result=await Administration.GetEffectiveAccessAsync(id,CancellationToken.None);if(result.IsSuccess)_access=result.Value;else _error=result.Error?.Message;_loading=false;} } }

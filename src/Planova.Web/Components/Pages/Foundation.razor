@@ -1,0 +1,17 @@
+@page "/foundation"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+
+<PageTitle>Foundation context — PLANOVA</PageTitle>
+<h1>Foundation context</h1>
+<FoundationState Kind="Loading" Title="Authenticated context" Message="Use the versioned API endpoint to load the current server-authorised identity and dependency status." />
+
+<details>
+    <summary>Supported shell states</summary>
+    <ul>
+        <li>Loading</li>
+        <li>Empty</li>
+        <li>Error</li>
+        <li>Forbidden</li>
+        <li>Offline or degraded</li>
+    </ul>
+</details>
